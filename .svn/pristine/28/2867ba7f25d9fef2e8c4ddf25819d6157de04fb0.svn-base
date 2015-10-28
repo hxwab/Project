@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+
+	<package name="account" extends="main" namespace="/account">
+		<action name="toList" class="accountAction" method="toList">
+			<result>/jsp/system/account/administrator/list.jsp</result>
+		</action>
+
+		<action name="list" class="accountAction" method="list">
+			<result type="json"><param name="root">jsonMap</param></result>
+			<result name="input" type="json"><param name="root">jsonMap</param></result>
+		</action>
+		
+		
+		<action name="delete" class="accountAction" method="delete">
+			<result type="json"><param name="root">jsonMap</param></result>
+			<result name="input" type="json"><param name="root">jsonMap</param></result>
+		</action>
+
+		<action name="toPage" class="accountAction" method="toPage">
+			<result type="chain">list</result>
+		</action>
+	</package>
+
+</struts>

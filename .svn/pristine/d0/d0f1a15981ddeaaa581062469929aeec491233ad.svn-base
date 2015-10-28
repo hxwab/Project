@@ -1,0 +1,86 @@
+package csdc.model;
+
+
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import org.apache.struts2.json.annotations.JSON;
+import org.hibernate.annotations.GenericGenerator;
+
+@Entity
+@Table(name="T_ROLE")
+public class Role implements java.io.Serializable {
+	private static final long serialVersionUID = 468019683903319630L;
+
+	@Id	
+	@Column(name="C_ID", length=40)  
+	@GeneratedValue(generator="idGenerator")
+    @GenericGenerator(name="idGenerator", strategy="uuid")
+    private String id; //角色id（PK）
+	
+	@Column(name="C_NAME", length=200)  
+    private String name; //角色名称
+	
+	@Column(name="C_DESCRIPTION", length=200)  
+    private String description; //角色描述
+	
+	@ManyToMany(targetEntity=Account.class, mappedBy = "roles")  
+	private Set<Account> accounts;
+	
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name="T_ROLE_RIGHT",  
+		joinColumns={@JoinColumn(name="C_ROLE_ID")},   
+		inverseJoinColumns={@JoinColumn(name="C_RIGHT_ID")}) 
+	private Set<Right> rights;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	@JSON(serialize=false)
+	public Set<Account> getAccounts() {
+		return accounts;
+	}
+
+	public void setAccounts(Set<Account> accounts) {
+		this.accounts = accounts;
+	}
+	@JSON(serialize=false)
+	public Set<Right> getRights() {
+		return rights;
+	}
+
+	public void setRights(Set<Right> rights) {
+		this.rights = rights;
+	}
+}

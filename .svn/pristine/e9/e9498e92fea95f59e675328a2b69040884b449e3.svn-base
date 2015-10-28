@@ -1,0 +1,28 @@
+package csdc.service.imp;
+
+import org.springframework.stereotype.Service;
+
+import csdc.model.Article;
+import csdc.service.IAboubUsService;
+
+
+@Service
+public class AboutUsService extends BaseService implements IAboubUsService {
+
+	
+	@Override
+	public Article getContent() {
+		
+		return (Article) dao.query("select art from Article art where art.typeID.name='关于我们'"); 
+	}
+
+
+	@Override
+	public String edit(Article newArticle, Article oldArticle) {
+		
+		oldArticle.setContent(newArticle.getContent());
+		dao.modify(oldArticle);
+		return oldArticle.getId();
+	}
+
+}

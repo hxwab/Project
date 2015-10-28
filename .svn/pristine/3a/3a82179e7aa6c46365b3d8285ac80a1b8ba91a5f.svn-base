@@ -1,0 +1,37 @@
+package csdc.service.imp;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import csdc.model.Product;
+import csdc.model.ProductReview;
+import csdc.model.Reward;
+import csdc.service.IFinalAuditService;
+
+@Service
+public class FinalAuditService extends BaseService implements IFinalAuditService{
+
+	@Override
+	public Product getProduct(String productId) {
+		return dao.query(Product.class, productId);
+	}
+
+	@Override
+	public ProductReview getProductReview(String productId) {
+		Map map = new HashMap();
+		map.put("id", productId);
+		String hql = "select pr from ProductReview where pr.id=:id and pr.type=0";
+		return (ProductReview) dao.queryUnique(hql, map);
+	}
+
+	@Override
+	public Reward getReward(String productId) {
+		Map map = new HashMap();
+		map.put("id", productId);
+		String hql = "select r from Product p left join p.reward r where p.id=:id ";
+		return (Reward) dao.queryUnique(hql, map);
+	}
+
+}

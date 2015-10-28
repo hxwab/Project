@@ -1,0 +1,57 @@
+package csdc.service.imp;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import csdc.model.Agency;
+import csdc.model.Expert;
+import csdc.model.Person;
+import csdc.service.IExpertService;
+
+@Service
+public class ExpertService extends BaseService implements IExpertService {
+	
+	@Override
+	public String addExpert(Expert expert) {
+		String expertId = (String) dao.add(expert);
+		return expertId;
+	}
+	
+	@Override
+	public Expert findExpert(String entityId) {
+		return dao.query(Expert.class, entityId);
+	}
+
+	@Override
+	public Expert findExpertByIdCard(String idcardNumber) {
+		return (Expert) dao.queryUnique("select e from Expert e left join e.person p where p.idcardNumber= '" + idcardNumber + "'");
+	}
+	
+	@Override
+	public Expert findExpertByIdCardAndName(String idcardNumber, String name) {
+		Map<String, String> paraMap = new HashMap<String, String>();
+		paraMap.put("idcardNumber", idcardNumber);
+		paraMap.put("name", name);
+		return (Expert) dao.queryUnique("select e from Expert e left join e.person p where p.idcardNumber=:idcardNumber and p.name=:name", paraMap);
+	}
+	
+	@Override
+	public void deleteExperts(List<String> expertIds) {
+		if (expertIds != null) {
+			for (int i = 0; i < expertIds.size(); i++) {
+				dao.delete(Expert.class, expertIds.get(i));
+			}
+		}
+	}
+	
+	@Override
+	public void modifyExpert(Expert expert) {
+		dao.modify(expert);
+	}
+	
+}

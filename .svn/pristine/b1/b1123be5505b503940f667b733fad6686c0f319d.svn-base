@@ -1,0 +1,35 @@
+define(function(require, exports, module){
+	$("body").on("click", ".select-agency", function(){
+		var that = $(this).parent();
+		dialog({
+			title: '选择机构',
+			url:"jsp/pop/popSelect/popSelectAgency.jsp",
+			data: {
+				InitSize:function(){
+					var pop = dialog.getCurrent();
+					// 重新计算iframe高度和宽度
+					pop.height($(pop.content().iframeNode.contentDocument)[0].body.scrollHeight);
+					pop.width($(pop.content().iframeNode.contentDocument)[0].body.scrollWidth);
+				},
+				tweakSize: function(){
+					var pop = dialog.getCurrent();
+					// 重新计算iframe高度和宽度
+					pop.height($("body",pop.content().iframeNode.contentDocument).height());
+					pop.width($("body",pop.content().iframeNode.contentDocument).width());
+				}
+			},
+			onclose: function () {
+				console.log(this.returnValue);
+				if(this.returnValue) {
+					$(".selected", that).empty().append(generateLink(this.returnValue.name, this.returnValue.id));
+					$("input[name*='agencyId']", that).val(this.returnValue.id);
+				}
+			}
+		}).showModal();
+		return false;
+	});
+	$("body").on("click", ".selected-link .delete-link", function(){
+		$(this).parent().remove();
+		$("input[name*='agencyId']").val("");
+	});	
+});

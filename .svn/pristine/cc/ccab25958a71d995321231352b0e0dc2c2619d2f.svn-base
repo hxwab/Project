@@ -1,0 +1,80 @@
+package csdc.service.imp;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.dom4j.Document;
+import org.springframework.transaction.annotation.Transactional;
+
+import csdc.model.Role;
+import csdc.service.IRoleService;
+import csdc.tool.bean.LoginInfo;
+
+/**
+ * 
+ * 角色管理接口实现
+ * @author huangxw
+ *
+ */
+@Transactional
+public class RoleService extends BaseService implements IRoleService {
+
+	@Override
+	public boolean checkRoleName(String roleName) {
+		if(roleName == null){
+			return true;// 角色名称为空，视为角色名已存在
+		} else {
+			Map<String,String> map = new HashMap<String, String>();
+			map.put("roleName", roleName);
+			List list = dao.query("from Role r where r.name = :roleName", map);
+			return list.isEmpty() ? false : true;
+		}
+	}
+
+	@Override
+	public String addRole(Role role, String[] rightNodeValue,
+			String defaultAgencyIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String modifyRole(Role oldRole, Role newRole,
+			String[] rightNodeValue, String defaultAgencyIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Role viewRole(String roleId) {
+		
+		return dao.query(Role.class, roleId);
+	}
+
+	@Override
+	public void deleteRole(List<String> roleIds) {
+		
+		for(String id : roleIds){
+			dao.delete(Role.class, id);
+			
+		}
+
+
+
+	}
+
+	@Override
+	public List<String> getRightNodeValue(String roleId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Document createRightXML(String roleId, List<String> str,
+			LoginInfo loginer, String mainRoleId, String keyword) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

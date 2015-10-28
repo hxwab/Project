@@ -1,0 +1,15 @@
+/*
+ * @author:Liujia
+ * @description:账号常看
+ * @date:2015/08/28
+ */
+define(function(require, exports, module){
+	var view = require("view");
+	var nameSpace = "account";
+	var showDetails = function(result){
+		console.log(result);
+	}
+	exports.init = function(){
+		view.show(nameSpace);
+	}
+});

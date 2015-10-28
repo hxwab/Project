@@ -1,0 +1,40 @@
+package csdc.service.imp;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import csdc.model.Article;
+import csdc.service.INews;
+
+@Service
+public class NewsService extends BaseService implements INews{
+
+	
+	@Override
+	public List getArticles(String type, Integer num) {
+		
+		SimpleDateFormat  sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SS");
+		List artlist = new ArrayList();
+		Map map = new HashMap();
+		map.put("type", type);
+		
+		List<Article> list = dao.query("select a from Article a left join a.systemOption so where so.name =:type order by a.createDate desc", map, 0, num);
+		map.remove(type);
+		for(Article a: list){
+			
+			map.put("id", a.getId());
+			map.put("title", a.getTitle());
+			map.put("date", sdf.format(a.getCreateDate().getTime()));
+			artlist.add(map);
+			
+		}
+				
+		return artlist;
+	}
+
+}

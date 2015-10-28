@@ -1,0 +1,25 @@
+package csdc.service;
+
+import csdc.model.Person;
+import csdc.model.SolicitPapers;
+
+public interface IPersonInfoService {
+	
+	/**
+	 * 由username查出个人信息
+	 * @param username
+	 * @return
+	 */
+	public Person getPersonByUsername(String username);
+	
+	
+	public SolicitPapers getPapersByUsername(String username);
+	
+	public String modifyPersonInfo(Person newPerson,Person old);
+	
+	public Boolean checkPassword(String password ,String username);
+	
+	public String modifyPassword(String oldPassword ,String newPassword,String username);
+	
+
+}

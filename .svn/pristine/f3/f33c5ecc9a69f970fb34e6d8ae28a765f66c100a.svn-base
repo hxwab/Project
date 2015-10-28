@@ -1,0 +1,29 @@
+/*
+ *@author fengzheqi
+ *@date 2015/08/31
+ *@description 登录界面 
+ */
+define(function(require, exports, require){
+	var initBlock = function (obj,length,blockName) {
+		for(var item in obj) {
+			if(obj.hasOwnProperty(item))
+				obj = obj[item];
+		}
+		var genHtml = "<ul class='list-unstyled'>";
+		if(obj,length,blockName) {
+			$.each(obj,function (i) {
+				genHtml += "<li><a href='" + "article/toView.action?entityId=" + obj[i][0] + "'>" + (obj[i][1].length > length ? (obj[i][1].substr(0,length)
+						+ "..."):(obj[i][1])) + (obj[i][3] ? "&nbsp;<span class='label label-warning label-twinkling'>新 !</span>" : "") + "</li>";
+			});
+		}
+		
+		genHtml += "</ul>";
+		return genHtml;
+	};
+	exports.init = function(){
+		$(".myNews").html(initBlock(json_news,22,"yyxw"));
+		$(".myNotice").html(initBlock(json_notice,22,"tzgg"));
+		$(".myStatus").html(initBlock(json_status,22,"skdt"));
+		$(".myRules").html(initBlock(json_rules,22,"zcfg"));
+	}
+})

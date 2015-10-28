@@ -1,0 +1,106 @@
+package csdc.service.imp;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import net.sf.json.JSONObject;
+
+import org.springframework.stereotype.Service;
+
+import csdc.model.Account;
+import csdc.model.Article;
+import csdc.model.Award;
+import csdc.model.Person;
+import csdc.model.SolicitPapers;
+import csdc.service.IPersonInfoService;
+import csdc.tool.MD5;
+
+@Service
+public class PersonInfoService extends BaseService implements
+		IPersonInfoService {
+
+	//前提是不允许有同名账号
+	@Override
+	public List getPersonByAccount(Account account) {
+		Map map = new HashMap();
+		map.put("username", account.getUsername());
+		map.put("password", account.getPassword());
+		String hql = "select a.username,p.name,p.gender,a.status,p.agencyName,p.email,p.mobilePhone from Account a left join a.person p where a.username=:username and a.password=:password";
+		//String hql = "select  ac.username,ac.type,ac.status,ac.expireDate from Account ac ,Award  aw left aw.product p where ac.username = :username and ac.password = :password and p.id=ac.productId";
+		List list = dao.query(hql, map);
+		return  pageListDealWith(list);
+	}
+	
+	
+	@Override
+	public Person getPersonByDefaultAccount() {
+		
+		return null;
+	}
+
+	/**
+	 * 1、中找到账号对应的person_id
+	 * 2、applicant找到person对应的applicant_id
+	 * 3、award 中找到applicant_id对应的award
+	 * 
+	 */
+	@Override
+	public List getAwardByAccount(Account account) {
+		Map map = new HashMap();
+		map.put("username", account.getUsername());
+		map.put("password", account.getPassword());
+		String hql = "select aw.id ,aw.productName,aw.author,p.agencyName,aw.group,aw.productType,aw.applicantStatus from Account ac left join ac.person acp ,Award aw left join aw.applicant app left join app.person p where ac.username=:username and ac.password=:password  and p.id = acp.id";
+		
+		
+		List awardList = dao.query(hql, map);
+		
+		return  pageListDealWith(awardList);
+		
+		
+	}
+
+
+	@Override
+	public String modifyPersonInfo(Person newPerson, Person old) {
+		dao.modify(newPerson);
+		return newPerson.getId();
+	}
+
+	@Override
+	public Boolean checkPassword(String password,String username) {
+		Account account = getAccountByUsernameAndPassword(password, username);
+		
+		return account!=null ;
+	}
+
+	@Override
+	public String modifyPassword(String oldPassword, String newPassword,
+			String username) {
+		
+		
+		Account account =getAccountByUsernameAndPassword(oldPassword, username);
+		account.setPassword(MD5.getMD5(newPassword));
+		dao.modify(account);
+		return account.getId();
+	}
+	
+	private Account getAccountByUsernameAndPassword(String password,String username){
+		
+		Map map =new HashMap();
+		map.put("username", username);
+		String md5Password = MD5.getMD5(password);
+		map.put("password", md5Password);
+		String hql = "select a from Account a where a.username=:username and a.password =:password";
+		
+		return (Account) dao.queryUnique(hql, map);
+		
+	}
+
+	
+	
+	
+}

@@ -1,0 +1,51 @@
+package csdc.service.imp;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+
+import com.sun.org.apache.bcel.internal.generic.Select;
+
+import csdc.model.Agency;
+import csdc.model.Expert;
+import csdc.service.IExpertService;
+
+@Service
+public class ExpertService extends BaseService implements IExpertService {
+	
+	@Override
+	public String addExpert(Expert expert) {
+		Agency agency = (Agency) dao.queryUnique("select agency from Agency agency where agency.name = '" + expert.getAgencyName() + "'");
+		expert.setAgency(agency);
+		expert.setAddYear(new SimpleDateFormat("yyyy").format(new Date()));
+		String expertId = (String) dao.add(expert);
+		return expertId;
+	}
+	
+	@Override
+	public Expert findExpert(String entityId) {
+		return dao.query(Expert.class, entityId);
+	}
+
+	@Override
+	public Expert findExpertByIdCard(String idcardNumber) {
+		return (Expert) dao.queryUnique("select e from Expert e left join e.person p where p.idcardNumber= '" + idcardNumber + "'");
+	}
+	
+	@Override
+	public void deleteExperts(List<String> expertIds) {
+		if (expertIds != null) {
+			for (int i = 0; i < expertIds.size(); i++) {
+				dao.delete(Expert.class, expertIds.get(i));
+			}
+		}
+	}
+	
+	@Override
+	public void modifyExpert(Expert expert) {
+		dao.modify(expert);
+	}
+	
+}

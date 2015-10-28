@@ -1,0 +1,71 @@
+package csdc.service.imp;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import csdc.model.Agency;
+import csdc.model.Person;
+import csdc.model.ProductAuthor;
+import csdc.service.IViewService;
+
+@Service
+@Transactional
+public class ViewService extends BaseService implements IViewService {
+
+	/**
+	 * 弹层提取个人信息
+	 */
+	@Override
+	public Map viewPerson(String entityId) {
+		Map map = new HashMap();
+		map.put("personId", entityId);
+		String hql ="select pa from ProductAuthor pa left join pa.person p where p.id=: personId";
+		ProductAuthor productAuthor = (ProductAuthor) dao.query(hql, map);
+		Person p =productAuthor.getPerson();
+		map.clear();
+		
+		map.put("name", p.getName());
+		map.put("gender", p.getGender());
+		map.put("ethnic", p.getEthnic());
+		map.put("idCardNumber", p.getIdcardNumber());
+		map.put("birthday", p.getBirthday());
+		map.put("email", p.getEmail());
+		map.put("mobilePhone", p.getMobilePhone());
+		map.put("address", p.getAddress());
+		map.put("postCode", p.getPostCode());
+		map.put("introduction", p.getIntroduction());
+		map.put("agencyName", p.getAgencyName());
+		
+		map.put("workDivision", productAuthor.getWorkDivision());
+		map.put("position", productAuthor.getPosition());
+		
+		return map;
+	}
+
+	@Override
+	public Map viewAgency(String entityId) {
+		Map map = new HashMap();
+		map.put("agencyId", entityId);
+		String hql ="select pa from ProductAuthor pa left join pa.agency a where a.id=: agencyId";
+		ProductAuthor productAuthor = (ProductAuthor) dao.query(hql, map);
+		Agency agency = productAuthor.getAgency();
+		map.clear();
+		
+		map.put("name", agency.getName());
+		map.put("type", agency.getType()==0 ? "非高校":"高校");
+		map.put("code", agency.getCode());
+		map.put("address", agency.getAddress());
+		map.put("directionName", agency.getDirectorName());
+		map.put("postCode", agency.getPostCode());
+		map.put("mobilePhone", agency.getMobilePhone());
+		map.put("email", agency.getEmail());
+		map.put("introduction", agency.getIntroduction());
+		map.put("createDate", agency.getCreateDate());
+		
+		return map;
+	}
+
+}

@@ -1,0 +1,31 @@
+/*
+ * @author fengzheqi
+ * @date 2015/08/26
+ * @description 奖励管理
+ * */
+
+define(function(require, exports, module){
+	require('validation');
+	require('validationInit');
+	require('form');
+	require('datePicker');
+	
+	/*初始化dataPicker */
+	$('#bonusSet .datePicker').each(function(){
+		$(this).datepicker({
+			language: 'zh-CN',
+			startView: 2,
+			minViewMode: 2,
+			format: 'yyyy',
+		    autoclose: true
+		});
+	});
+	
+	$('.u-modify').on('click', function(){
+		
+	});
+	
+	$('.u-delete').on('click', function(){
+		
+	})
+})

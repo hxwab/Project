@@ -1,0 +1,40 @@
+package csdc.service.imp;
+
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import csdc.model.Account;
+import csdc.model.Agency;
+import csdc.model.Person;
+import csdc.service.IRegisterService;
+
+@Service
+@Transactional
+
+public class RegisterService extends BaseService implements IRegisterService {
+
+	
+
+	@Override
+	public String addPerson(Person person) {
+		
+		return dao.add(person);
+	}
+
+	@Override
+	public String addAccount(Account account, Person person,Map map) {
+		String personId = dao.add(person);
+		Person p = dao.query(Person.class, personId);
+		account.setPerson(person);
+		String email = (String) map.get("email");
+		account.setMail(email);
+		String agencyId =  (String) map.get("agencyId");
+		Agency agency = dao.query(Agency.class,agencyId);
+		account.setAgency(agency);
+		
+		return dao.add(account);
+	}
+
+}

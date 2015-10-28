@@ -1,0 +1,125 @@
+package csdc.action.expert;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import csdc.action.BaseAction;
+
+@Component   
+@Scope(value="prototype")
+public class ExpertAction extends BaseAction {
+
+	private static final long serialVersionUID = -7305780982528326793L;
+	protected static final String DATE_FORMAT = "yyyy-MM-dd";// 列表时间格式
+
+	private static final String HQL = "select p.name, p.agencyName, e.specialityTitle, e.disciplineType, e.addDate, e.id from Expert e left join e.person p where 1=1";
+	private static final String PAGE_NAME = "expertPage";
+	private static final String PAGE_BUFFER_ID = "e.id";//缓存id
+	private static final String column[] = {
+		"p.name",
+		"p.agencyName",
+		"e.specialityTitle",
+		"e.disciplineType",
+		"e.addDate"
+	};// 排序用的列
+	
+	private final static String[] SEARCH_CONDITIONS = new String[]{
+		"LOWER(p.name) like :keyword",
+		"LOWER(p.agencyName) like :keyword",
+		"LOWER(e.specialityTitle) like :keyword",
+		"LOWER(e.disciplineType) like :keyword",
+		"LOWER(e.addDate) like :keyword"
+	};//初级检索所用条件范围
+	
+	@Override
+	public String toAdd() {
+		return null;
+	}
+
+	@Override
+	public String add() {
+		return null;
+	}
+
+	@Override
+	public String delete() {
+		return null;
+	}
+
+	@Override
+	public String toModify() {
+		return null;
+	}
+
+	@Override
+	public String modify() {
+		return null;
+	}
+
+	@Override
+	public String view() {
+		return null;
+	}
+
+	@Override
+	public String toView() {
+		return null;
+	}
+
+	@Override
+	public Object[] simpleSearchCondition() {
+		StringBuffer hql = new StringBuffer();
+		Map<String, String> map = new HashMap<String, String>();
+		hql.append(HQL);
+		if (keyword != null && !keyword.trim().isEmpty()) {
+			boolean flag = false;
+			String[] sc = searchConditions();
+			for (int i = 0; !flag && i < sc.length; i++) {
+				if (searchType == i) {
+					hql.append(" and ").append(sc[i]);
+					flag = true;
+				}
+			}
+			map.put("keyword", "%" + (keyword == null ? "" : keyword.toLowerCase()) + "%");
+		}
+		return new Object[]{
+			hql.toString(),
+			map,
+			0,
+			null
+		};
+	}
+
+	@Override
+	public Object[] advSearchCondition() {
+		return null;
+	}
+
+	@Override
+	public String pageName() {
+		return PAGE_NAME;
+	}
+
+	@Override
+	public String pageBufferId() {
+		return ExpertAction.PAGE_BUFFER_ID;
+	}
+
+	@Override
+	public String[] sortColumn() {
+		return column;
+	}
+
+	@Override
+	public String dateFormat() {
+		return DATE_FORMAT;
+	}
+	
+	public String[] searchConditions() {
+		return SEARCH_CONDITIONS;
+	}
+	
+}

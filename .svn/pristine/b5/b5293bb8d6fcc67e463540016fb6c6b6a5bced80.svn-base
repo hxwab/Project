@@ -1,0 +1,30 @@
+/**
+ * @author liujia
+ * @date 2015/8/7
+ * @descrioption 论坛投稿
+ */
+define(function(require, exports, module){
+	require("validation");
+	require("validationInit");
+	require("uploadify");
+	require("uploadify-ext");
+	$("#forumContribute").validationEngine();
+	$("#addPaperUpload").uploadifyExt({
+		uploadLimitExt: '1', //文件上传个数的限制
+		fileSizeLimit: '20000MB', //文件上传大小的限制
+		fileTypeDesc: '附件', //可以不用管
+		fileTypeExts: '*.xls;*.XLS;',//限制为Excel上传格式
+		buttonText : '数据导入', // 按钮上的文字
+		buttonClass: "btn btn-default",
+		hideButton : true,
+		buttonImg: " ",
+		preventCaching: false,
+		multi: false,
+		onUploadComplete:function(file,data,response){
+			$("#file").val("upload success!");
+			//$('#addSurveyDataUpload').uploadify('cancel', "*");
+			//$('#addSurveyDataUpload').uploadifyClearQueue();
+		}
+	});
+});
+

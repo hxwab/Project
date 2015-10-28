@@ -1,0 +1,122 @@
+package csdc.service.imp;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import csdc.model.Account;
+import csdc.model.Article;
+import csdc.model.Award;
+import csdc.model.Person;
+import csdc.model.SolicitPapers;
+import csdc.service.IPersonInfoService;
+import csdc.tool.MD5;
+
+@Service
+public class PersonInfoService extends BaseService implements
+		IPersonInfoService {
+
+	//前提是不允许有同名账号
+	@Override
+	public Person getPersonByUsername(String username) {
+		Map map = new HashMap();
+		map.put("username", username);
+		String hql = "select p from Account a left join a.person p where a.username=:username";
+		return (Person) dao.queryUnique(hql, map);
+	}
+	
+	
+	@Override
+	public Person getPersonByDefaultAccount() {
+		
+		return null;
+	}
+
+	/**
+	 * 1、中找到账号对应的person_id
+	 * 2、applicant找到person对应的applicant_id
+	 * 3、award 中找到applicant_id对应的award
+	 * 
+	 */
+	@Override
+	public List<Award> getAwardByUsername(String username) {
+		Map map = new HashMap();
+		map.put("username", username);
+		String hql = "select aw from Account ac left join ac.person acp ,Award aw left join aw.applicant app left join app.person p where a.username=:username and p.id = acp.id";
+		List<Award> awardList = dao.query(hql, map);
+		return awardList;
+	}
+
+
+	@Override
+	public String modifyPersonInfo(Person newPerson, Person old) {
+		dao.modify(newPerson);
+		return newPerson.getId();
+	}
+
+	@Override
+	public Boolean checkPassword(String password,String username) {
+		Account account = getAccountByUsernameAndPassword(password, username);
+		
+		return account!=null ;
+	}
+
+	@Override
+	public String modifyPassword(String oldPassword, String newPassword,
+			String username) {
+		
+		
+		Account account =getAccountByUsernameAndPassword(oldPassword, username);
+		account.setPassword(MD5.getMD5(newPassword));
+		dao.modify(account);
+		return account.getId();
+	}
+	
+	private Account getAccountByUsernameAndPassword(String password,String username){
+		
+		Map map =new HashMap();
+		map.put("username", username);
+		String md5Password = MD5.getMD5(password);
+		map.put("password", md5Password);
+		String hql = "select a from Account a where a.username=:username and a.password =:password";
+		
+		return (Account) dao.queryUnique(hql, map);
+		
+	}
+
+	
+	public  List pageListDealWith(List<Award> list) {
+	    List laData = new ArrayList();// 处理之后的列表数据
+		Object[] o;// 缓存查询结果的一行
+		String[] item;// 缓存查询结果一行中的每一字段
+		SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SS");// 时间格式化对象
+		String datestr;// 格式化之后的时间字符串
+		
+		// 遍历初始查询列表数据，按照指定格式，格式化其中的时间字段，其它字段转化为字符串
+		for (Object p : list) {
+			o = (Object[]) p;
+			item = new String[o.length];
+			for (int i = 0; i < o.length; i++) {
+				if (o[i] == null) {// 如果字段值为空，则以""替换
+					item[i] = "";
+				} else {// 如果字段值非空，则做进一步判断
+					if (o[i] instanceof Date) {// 如果字段为时间对象，则按照子类定义的时间格式格式化
+						datestr = dateformat.format((Date) o[i]);
+						item[i] = datestr;
+					} else {// 如果字段非时间对象，则直接转化为字符串
+						item[i] = o[i].toString();
+					}
+				}
+			}
+			laData.add(item);// 将处理好的数据存入laData
+		}
+		
+		return laData;
+	}
+	
+}

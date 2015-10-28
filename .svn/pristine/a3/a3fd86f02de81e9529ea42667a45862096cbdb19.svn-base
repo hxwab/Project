@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN" "http://struts.apache.org/dtds/struts-2.0.dtd">
+
+<struts>
+	<package name="bonus" extends="main" namespace="/system/dataDic/bonus">
+		<action name="toView" class="RewardAction" method="toView">
+			<result>/jsp/system/dataDic/reward/view.jsp</result>
+		</action>
+		<action name="view" class="RewardAction" method="view">
+			<result type="json"><param name="root">jsonMap</param></result>
+			<result name="input" type="json"><param name="root">jsonMap</param></result>
+		</action>
+		
+		<action name="toAdd" class="RewardAction" method="toAdd">
+			<result>/jsp/system/dataDic/reward/add.jsp</result>
+		</action>
+		<action name="add" class="RewardAction" method="add">
+			<result type="json">
+				<param name="root">jsonMap</param>
+			</result>
+			<result name="input" type="json"><param name="root">jsonMap</param></result>
+		</action>
+		<action name="delete" class="RewardAction" method="delete">
+			<result type="json"><param name="root">jsonMap</param></result>
+		</action>
+		<action name="toModify" class="RewardAction" method="toModify">
+			<result>/jsp/system/dataDic/reward/modify.jsp</result>
+		</action>
+		<action name="modify" class="RewardAction" method="modify">
+			<result type="json">
+				<param name="root">jsonMap</param>
+			</result>
+			<result name="input" type="json"><param name="root">jsonMap</param></result>
+		</action>
+	</package>
+</struts>

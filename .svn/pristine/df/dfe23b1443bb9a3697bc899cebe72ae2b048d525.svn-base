@@ -1,0 +1,109 @@
+package csdc.action.pop.select;
+
+import csdc.action.BaseAction;
+
+public class AgencyAction extends BaseAction {
+	
+	
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4288686161982485183L;
+	
+	private static final String HQL = "select t.id, p.name, d.name, i.name, u.name, p.id from Teacher t left join t.person p left join t.department d left join t.institute i left join t.university u left join i.type sys where ";
+	private static final String[] COLUMN = {
+			"p.name",
+			"u.name,p.name",
+			"CONCAT(d.name, i.name), p.name"
+		};// 用于拼接的排序列
+	private static final String PAGE_NAME = "selectAgencyPage";// 列表页面名称
+	private static final String DATE_FORMAT = "yyyy-MM-dd";// 列表时间格式
+	private static final String PAGE_BUFFER_ID = "agency.id";// 上下条查看时用于查找缓存的字段
+	
+	
+	
+
+	@Override
+	public Object[] simpleSearchCondition() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+
+	@Override
+	public String toAdd() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String add() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String delete() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toModify() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String modify() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String view() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+
+	@Override
+	public Object[] advSearchCondition() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String pageName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String pageBufferId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] sortColumn() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String dateFormat() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

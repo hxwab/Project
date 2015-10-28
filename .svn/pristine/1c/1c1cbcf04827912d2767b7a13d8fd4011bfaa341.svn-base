@@ -1,0 +1,116 @@
+package csdc.model;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.GenericGenerator;
+
+@Entity
+@Table(name="T_BONUS" )
+public class Bonus implements Serializable {
+	private static final long serialVersionUID = 7151871470737916338L;
+
+	@Id	
+	@Column(name="C_ID", length=40)  
+	@GeneratedValue(generator="idGenerator")
+    @GenericGenerator(name="idGenerator", strategy="uuid")
+    private String id; //奖励id（PK）
+	
+	@Column(name="C_YEAR", length=40)  
+    private String year; //年份
+	
+	@Column(name="C_LEVEL")  
+    private Integer level; //奖金等级[0：特等奖；1：一等奖；2：二等奖；3：三等奖]
+	
+	@Column(name="C_TYPE")  
+    private Integer type; //类别[0：著作；1：论文]
+	
+	@Column(name="C_BONUS", length=40)  
+    private String bonus; //金额
+	
+	@OneToOne
+	@JoinColumn(name="C_CREATER_ID")
+	private Account createrId; //创建人id（FK）
+	
+	@Column(name="C_CREATE_DATE")  
+    private Integer createDate; //创建时间
+	
+	@Column(name="C_UPDATE_DATE")  
+    private Integer updateDate; //最近修改时间
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getYear() {
+		return year;
+	}
+
+	public void setYear(String year) {
+		this.year = year;
+	}
+
+	public String getBonus() {
+		return bonus;
+	}
+
+	public void setBonus(String bonus) {
+		this.bonus = bonus;
+	}
+
+	public Account getCreaterId() {
+		return createrId;
+	}
+
+	public void setCreaterId(Account createrId) {
+		this.createrId = createrId;
+	}
+
+	public Integer getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Integer createDate) {
+		this.createDate = createDate;
+	}
+
+	public Integer getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(Integer updateDate) {
+		this.updateDate = updateDate;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public Integer getLevel() {
+		return level;
+	}
+
+	public void setLevel(Integer level) {
+		this.level = level;
+	}
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
+	
+}

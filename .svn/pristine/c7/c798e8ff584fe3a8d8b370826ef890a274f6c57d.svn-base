@@ -1,0 +1,255 @@
+package csdc.action.portal;
+
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import csdc.action.BaseAction;
+import csdc.bean.Product;
+import csdc.tool.ApplicationContainer;
+import csdc.tool.info.GlobalInfo;
+import csdc.tool.info.ProductInfo;
+
+@Component
+@Scope(value="prototype")
+
+public class DownloadAction extends BaseAction{
+
+	/**
+	 * 遍历文件，链接下载（提供详情么？）
+	 * 表格下载和文章下载
+	 */
+	private static final long serialVersionUID = 6312354941195229315L;
+	
+	private String fileStream;
+	private String  fileName;
+	private String  fileFileName;
+	
+	
+
+	private String type;
+	
+	
+	/**
+	 * 提供论文或表格的批量下载
+	 * @return
+	 */
+	public String download(){
+		if(type.equals("paper")){
+			
+			
+			
+		}else if(type.equals("article")){
+			
+		}
+		
+		return SUCCESS;
+	}
+	
+	
+	
+	
+	
+	
+	/**
+	 * 成果下载流
+	 */
+	public InputStream getTargetFile() throws Exception {
+		InputStream downloadStream = null;
+		if(null != fileFileName && !fileFileName.isEmpty()){
+			String filename = new String(fileFileName.getBytes("iso8859-1"), "utf-8");
+			fileFileName = new String(filename.substring(filename.lastIndexOf("/") + 1).getBytes(), "ISO-8859-1");
+			//先从应用服务器本地获取文件流，若本地服务器不能获取，则从云存储中获取文件流
+			if(ApplicationContainer.sc.getResourceAsStream(filename) != null) {
+				downloadStream = ApplicationContainer.sc.getResourceAsStream(filename);
+			} else {
+				product = (Product) dao.query(Product.class, entityId);
+				downloadStream = dmssService.download(product.getDfs());
+			}
+		 }
+		return downloadStream;
+	}
+
+	/**
+	 * 文件是否存在校验
+	 */
+	@SuppressWarnings("unchecked")
+	public String validateFile() throws Exception{
+		//1.成果id不能为空
+		if(null == entityId || entityId.isEmpty()) {
+			jsonMap.put(GlobalInfo.ERROR_INFO, ProductInfo.ERROR_PRODUCT_NULL);
+		} else {
+			//2.成果须在管辖范围内
+			if(!productService.checkIfUnderControl(loginer, entityId.trim(), 15, true)){
+				jsonMap.put(GlobalInfo.ERROR_INFO, ProductInfo.ERROR_NOT_IN_SCOPE);
+			}
+			product = (Product)dao.query(Product.class, entityId);
+			if(null == product) {//3.成果对象不能为空
+				jsonMap.put(GlobalInfo.ERROR_INFO, ProductInfo.ERROR_PRODUCT_NULL);
+			} else if(null == product.getFile() || !product.getFile().equals(fileFileName)) {//4.文件名须匹配
+				jsonMap.put(GlobalInfo.ERROR_INFO, ProductInfo.ERROR_FILE_NOT_MATCH);
+			} else {//5.文件须存在
+				String filename = new String(fileFileName.getBytes("iso8859-1"), "utf-8");
+				if(null == ApplicationContainer.sc.getResourceAsStream(filename)){//文件在本地和云存储中都不存在或者云存储文件存在，但云存储未开
+					if(null == product.getDfs()) {
+						jsonMap.put(GlobalInfo.ERROR_INFO, ProductInfo.ERROR_FILE_NOT_EXIST);
+					} else if (null != product.getDfs() && !dmssService.getStatus()) {
+						jsonMap.put(GlobalInfo.ERROR_INFO, ProductInfo.ERROR_FILE_NOT_EXIST);
+					}
+				}
+			}
+		}
+		return SUCCESS;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	@Override
+	public String toAdd() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String add() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String delete() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toModify() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String modify() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String view() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String toView() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * 此处复用该方法，传参数辨别列表是表格下载还是文章下载
+	 * 
+	 */
+	
+	
+	@Override
+	public Object[] simpleSearchCondition() {
+		 StringBuffer hql = new StringBuffer();
+		 Map map = new HashMap();
+		 if(type.equals("paper")){
+			 
+			 hql.append("select sp.id,sp.name,sp.author,sp.createDate,sp.type from SolicitPapers sp where 1=1");
+			 
+			 if(keyword!=null&&!keyword.isEmpty()){
+				 hql.append(" and ");
+					if (searchType == 1) {
+						hql.append("LOWER(sp.name) like :keyword");
+						map.put("keyword", "%" + keyword + "%");
+					} else if (searchType == 2) {
+						hql.append("LOWER(sp.author) like :keyword");
+						map.put("keyword", "%" + keyword + "%");
+					} else if(searchType==3){
+						hql.append("LOWER(sp.type) like :keyword");
+						map.put("keyword", "%" + keyword + "%");
+					} 
+			 }
+			 
+		 }else if(type.equals("article")){
+			 
+			 hql.append("select a.id ,a.attachmentName from Article a where 1=1");
+			 if(keyword!=null&&!keyword.isEmpty()){
+					if (searchType == 1) {
+						hql.append("and LOWER(a.attachmentName) like :keyword");
+						map.put("keyword", "%" + keyword + "%");
+					}
+			 }
+		 }
+		
+		return new Object[]{
+				hql.toString(),
+				map,
+				0,
+				null,
+				null
+		};
+	}
+	
+
+	@Override
+	public Object[] advSearchCondition() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String pageName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String pageBufferId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] sortColumn() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String dateFormat() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	
+	
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+
+	
+	
+	
+
+}

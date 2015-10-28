@@ -1,0 +1,41 @@
+package csdc.service;
+
+import java.util.List;
+
+import csdc.model.Expert;
+
+public interface IExpertService {
+
+	/**
+	 * 添加专家
+	 * @param expert待添加的专家对象
+	 */
+	public String addExpert(Expert expert);
+	
+	/**
+	 * 根据ID查找专家
+	 * @param entityId
+	 * @return
+	 */
+	public Expert findExpert(String entityId);
+
+	/**
+	 * 根据idcardNumber找专家
+	 * @param idcardNumber
+	 * @return
+	 */
+	public Expert findExpertByIdCard(String idcardNumber);
+	
+	/**
+	 * 群删专家
+	 * @param expertIds
+	 */
+	public void deleteExperts(List<String> expertIds);
+	
+	/**
+	 * 修改专家
+	 * @param expert
+	 */
+	public void modifyExpert(Expert expert);
+	
+}

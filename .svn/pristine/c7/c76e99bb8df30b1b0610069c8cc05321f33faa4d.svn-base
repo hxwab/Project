@@ -1,0 +1,260 @@
+package csdc.action.product;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import org.apache.poi.ss.formula.eval.PercentEval;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import csdc.action.BaseAction;
+import csdc.model.Agency;
+import csdc.model.Person;
+import csdc.model.Product;
+import csdc.service.IApplyService;
+import csdc.service.IUploadService;
+import csdc.tool.ApplicationContainer;
+import csdc.tool.FileTool;
+import csdc.tool.bean.FileRecord;
+import csdc.tool.bean.UploadPath;
+/**
+ * 
+ * @author huangxw
+ * 上传、详情列表，增、删、改 ，查、下载（仅限管理员）
+ *
+ */
+
+@Component
+@Scope(value="prototype")
+
+public class ApplyAction extends BaseAction {
+
+	//private static final String HQL = "select"
+	
+	
+	private Product product;
+	
+	private Person person;//负责人
+	
+	private Person member1;//项目成员
+	
+	private Person member2;
+	
+	private Person member3;
+	
+	private Person member4;
+	
+	private Person member5;
+	
+	private Agency agency;
+	
+	private HashMap map;
+	
+	@Autowired
+	private IApplyService applyService;
+	
+	@Autowired
+	private IUploadService uploadService;
+	
+	
+	
+	
+	@Override
+	public String toAdd() {
+		return SUCCESS;
+	}
+
+	@Override
+	public String add() {
+		String fileGroupId = "awardApplyUpload";
+		String fileSavePath = null;
+       
+        fileSavePath = (String) ApplicationContainer.sc.getAttribute(UploadPath.AWARD_APPLY);
+		
+		for (FileRecord fileRecord : uploadService.getGroupFiles(fileGroupId)) {
+			String newFilePath = FileTool.getAvailableFilename(fileSavePath, fileRecord.getOriginal());
+			product.setFile(newFilePath);
+			fileRecord.setDest(new File(ApplicationContainer.sc.getRealPath(product.getFile())));//将文件移至新的位置(不立刻执行，而在uploadService.flush时再执行)
+		}
+		uploadService.flush(fileGroupId);
+		//entityId = applyService.addAward(product);
+		
+		List<Person> persons = new ArrayList<Person>();
+		persons.add(person);
+		persons.add(member1);
+		persons.add(member2);
+		persons.add(member3);
+		persons.add(member4);
+		persons.add(member5);
+		
+		/**
+		 * map封装其他参数
+		 */
+		
+		applyService.addApplyInfos(persons, product, agency, map);
+		
+		jsonMap.put("tag", "1");
+		return SUCCESS;
+	}
+
+	@Override
+	public String delete() {
+		applyService.delete(entityIds);
+		return SUCCESS;
+	}
+
+	@Override
+	public String toModify() {
+	
+		List<Person> persons = new ArrayList<Person>();
+		persons.add(member1);
+		persons.add(member2);
+		persons.add(member3);
+		persons.add(member4);
+		persons.add(member5);
+		Product product = applyService.getProductById(entityId);
+		Person person = product.getAuthor();
+		/*List<ProductMember> members =applyService.getProductMembersByProductId(entityId);
+		for(int i =0;i<members.size();i++){
+			perso
+			
+		}*/
+		return SUCCESS;
+	}
+
+	@Override
+	public String modify() {
+		// TODO Auto-generated method stub
+		return SUCCESS;
+	}
+
+	@Override
+	public String view() {
+		// TODO Auto-generated method stub
+		return SUCCESS;
+	}
+
+	@Override
+	public String toView() {
+		// TODO Auto-generated method stub
+		return SUCCESS;
+	}
+
+	@Override
+	public Object[] simpleSearchCondition() {
+		
+		
+		
+		
+		
+		return null;
+	}
+
+	@Override
+	public Object[] advSearchCondition() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String pageName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String pageBufferId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] sortColumn() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String dateFormat() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+
+
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
+	public Person getPerson() {
+		return person;
+	}
+
+	public void setPerson(Person person) {
+		this.person = person;
+	}
+
+	public Person getMember1() {
+		return member1;
+	}
+
+	public void setMember1(Person member1) {
+		this.member1 = member1;
+	}
+
+	public Person getMember2() {
+		return member2;
+	}
+
+	public void setMember2(Person member2) {
+		this.member2 = member2;
+	}
+
+	public Person getMember3() {
+		return member3;
+	}
+
+	public void setMember3(Person member3) {
+		this.member3 = member3;
+	}
+
+	public Person getMember4() {
+		return member4;
+	}
+
+	public void setMember4(Person member4) {
+		this.member4 = member4;
+	}
+
+	public Person getMember5() {
+		return member5;
+	}
+
+	public void setMember5(Person member5) {
+		this.member5 = member5;
+	}
+
+	public Agency getAgency() {
+		return agency;
+	}
+
+	public void setAgency(Agency agency) {
+		this.agency = agency;
+	}
+	
+	
+	
+	
+	
+	
+
+}

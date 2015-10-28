@@ -1,0 +1,18 @@
+package csdc.service;
+
+import java.util.List;
+import java.util.Map;
+
+import csdc.model.Article;
+
+public interface INews {
+	
+	/**
+	 * 取出相应的新闻类型并封装为json
+	 * @param type  新闻类型
+	 * @param num   取出条数
+	 * @return
+	 */
+	public List  getArticles(String type,Integer num);
+
+}

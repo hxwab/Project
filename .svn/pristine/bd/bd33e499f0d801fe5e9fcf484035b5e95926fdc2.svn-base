@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns:security="http://www.springframework.org/schema/security" xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+    http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd">
+	<security:global-method-security pre-post-annotations="enabled"/>
+    <security:http auto-config="true" use-expressions="true" access-denied-page="/jsp/403.jsp" lowercase-comparisons="false"
+				access-decision-manager-ref="accessDecisionManager">
+		<security:intercept-url pattern="/**" filters="none"/>
+		<security:intercept-url pattern="/css/**" filters="none"/>	
+		<security:intercept-url pattern="/js/**" filters="none"/>
+		<security:intercept-url pattern="/images/**" filters="none"/>
+		<security:intercept-url pattern="/tool/**" filters="none"/> 
+		<security:intercept-url pattern="/temp/**" filters="none"/> 
+		<security:intercept-url pattern="/upload/articleAttachments" filters="none"/>
+		<security:intercept-url pattern="/upload/slideImages/**" filters="none"/>
+		<security:intercept-url pattern="/upload/editorImages/**" filters="none"/>
+		
+		<security:intercept-url pattern="/toIndex" access="permitAll"/>
+		<security:intercept-url pattern="/preLogin" access="permitAll"/>
+		<security:intercept-url pattern="/doLogin" access="permitAll"/>
+		<security:intercept-url pattern="/timeout" filters="none"/>
+		<security:intercept-url pattern="/toSearch" access="permitAll"/>
+		<security:intercept-url pattern="/toManage" access="permitAll"/>
+		<security:intercept-url pattern="/search" access="permitAll"/>
+		
+		<security:intercept-url pattern="/article/**" access="permitAll"/>
+		<security:intercept-url pattern="/navigation/**" access="permitAll"/>
+		<security:intercept-url pattern="/slide/**" access="permitAll"/>
+		<security:intercept-url pattern="/system/**" access="permitAll"/>
+		<security:intercept-url pattern="/systemOption/**" access="permitAll"/>
+		<security:intercept-url pattern="/account/**" access="permitAll"/>
+		<security:intercept-url pattern="/role/**" access="permitAll"/>
+		<security:intercept-url pattern="/right/**" access="permitAll"/>
+		<security:intercept-url pattern="/self/**" access="permitAll"/>
+		<security:intercept-url pattern="/block/**" access="permitAll"/>
+		<security:intercept-url pattern="/friendlyLink/**" access="permitAll"/>
+		<security:intercept-url pattern="/quickLink/**" access="permitAll"/>
+		<security:intercept-url pattern="/mail/**" filters="none"/>
+		
+		<security:intercept-url pattern="/upload/upload" filters="none"/>
+		<security:intercept-url pattern="/upload/discard" filters="none"/>
+		<security:intercept-url pattern="/upload/fetchGroupFilesSummary" filters="none"/>
+		
+						
+		<!-- 未配置的资源 -->
+		<security:intercept-url pattern="/**" access="denyAll"/>
+		
+        <security:form-login login-processing-url="/login"
+        			login-page="/toIndex"
+        			authentication-failure-url="/toIndex?error=0"
+        			default-target-url="/doLogin"
+        			always-use-default-target="true" />
+        <security:logout logout-url="/logout" logout-success-url="/toIndex"/>
+        
+        <!-- 最多允许N个同时在线,若个数自定义,自行实现 -->
+        <security:session-management invalid-session-url="/toIndex" session-authentication-error-url="/jsp/error.jsp" session-fixation-protection="migrateSession">
+        	<security:concurrency-control max-sessions="10000" expired-url="/timeout" error-if-maximum-exceeded="true" />
+        </security:session-management>
+        <!-- 自定义过滤器 -->
+        <security:custom-filter before="FORM_LOGIN_FILTER" ref="myAuthenticationFilter"/>
+    </security:http>
+    
+	<beans:bean id="myAuthenticationFilter" class="org.csdc.tool.security.MyAuthenticationFilter">
+		<beans:property name="myAuthentication" ref="myAuthentication" />
+	</beans:bean>
+
+	<beans:bean id="myAuthentication" class="org.csdc.tool.security.MyAuthentication">
+	</beans:bean>
+
+	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+		<beans:property name="decisionVoters">
+			<beans:list>
+				<beans:bean class="org.springframework.security.access.vote.RoleVoter" />
+				<beans:bean class="org.springframework.security.web.access.expression.WebExpressionVoter" />
+				<beans:bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+
+	<security:authentication-manager alias="authenticationManager">
+		<security:authentication-provider user-service-ref="myUserDetailsService">
+			<security:password-encoder hash="md5" />
+		</security:authentication-provider>
+	</security:authentication-manager>
+	<beans:bean id="myUserDetailsService" class="org.csdc.tool.security.MyUserDeitailsService">
+	</beans:bean>
+</beans:beans>

@@ -1,0 +1,130 @@
+package csdc.service.imp;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Service;
+
+import csdc.model.Account;
+import csdc.model.Agency;
+import csdc.model.Award;
+import csdc.model.Person;
+import csdc.model.Product;
+import csdc.service.IApply;
+/**
+ * 
+ * 需要操作的表有 Person、Product、Agency、product_member
+ * 
+ * 首先添加Person，因为无任何外键关联
+ * 其次添加Agency,跟person有外键关联
+ * 再添加Product,跟person/agency/systemoption有关 
+ * 最后添加中间表product_member，跟person/agency/product有关
+ * 
+ * @author huangxw
+ *
+ */
+@Service
+public class ApplyService extends BaseService implements IApply {
+
+	
+	@Override
+	public Map getAwards() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Award getAwardById(String id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Award getAwardByAccount(Account account) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String addAward(Award award) {
+		award.setCreateDate(new Date());
+		return dao.add(award);
+	}
+
+	@Override
+	public String modify(Award oldAward, Award newAward) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void delete(List<String> awardIds) {
+		
+		for (String id:awardIds){
+			dao.delete(Award.class, id);
+		}
+		
+	}
+
+	@Override
+	public String addPerson(Person person) {
+		
+		return dao.add(person);
+	}
+
+	@Override
+	public void addPersons(List<Person> person) {
+		
+		for(Person p : person){
+			addPerson(p);
+		}
+		
+	}
+
+	/**
+	 * 要添加机构、人员和学科代码（均为外键关联）
+	 * 
+	 */
+	@Override
+	public String addProduct(Product product) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/**
+	 * 要添加到product_member表中去
+	 */
+	@Override
+	public String addApplyInfo(Person person, Product product, Agency agency,Map map) {
+		
+		String personId = addPerson(person);
+		/*
+		 * 先找机构负责人，再将机构负责人设置为agency的属性
+		 * Person agencyDirector = dao.query(***);
+		 * agency.setDirector(agencyDirector);
+		 */
+		String agencyId = dao.add(agency);
+		
+		/**
+		 * 
+		 * 必须是先存入再取出，因为外键关联存的是对象（该对象必须具有主键ID）
+		 * 
+		 * 1、找到作者 author = dao.query(Person.Class, personId);
+		 * 2、找到机构 agency = dao.query(Agency.Class , agencyId);
+		 * 3、找到学习代码  systemOptin = dao.query("***",map);
+		 * 
+		 * 然后是set属性
+		 */
+		String prouctId = addProduct(product);
+		
+		return null;
+	}
+
+	@Override
+	public String addApplyInfos(List<Person> person, Product product,Agency agency,Map map) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}
